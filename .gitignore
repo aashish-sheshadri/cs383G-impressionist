@@ -11,3 +11,8 @@
 *.lai
 *.la
 *.a
+
+# Makefiles
+Makefile
+Makefile.campus
+Makefile.mac
