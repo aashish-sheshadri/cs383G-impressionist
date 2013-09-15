@@ -9,6 +9,43 @@
 
 #include "impressionist.h"
 #include "bitmap.h"
+#include <vector>
+#include <algorithm>
+#include <functional>
+#include <numeric>
+
+
+template <typename RI1,typename RI2>
+void loadNeighbours(int currY, int currX, int knlWidth, int knlHeight, RI1 sourceBuffer, int srcBufferWidth, int srcBufferHeight, RI2 redIt, RI2 greenIt, RI2 blueIt){
+	int top = -knlHeight/2;
+	int bottom = knlHeight/2;
+	int left = -knlWidth/2;
+	int right = knlWidth/2;
+
+	if(knlHeight%2 == 0){
+		--bottom;}
+
+	if(knlWidth%2 == 0){
+		--right;}
+
+	int neighbourX = -1;
+	int neighbourY = -1;
+
+	for (int y = top;y<=bottom;++y){
+		for(int x = left;x<=right;++x){
+			neighbourY = currY + y;
+			neighbourX = currX + x;
+			if(neighbourX<0||neighbourY<0){
+				++redIt;
+				++greenIt;
+				++blueIt;
+				continue;}
+			*redIt = sourceBuffer[3*(y*srcBufferWidth+x)+0];
+			*blueIt = sourceBuffer[3*(y*srcBufferWidth+x)+1];
+			*greenIt = sourceBuffer[3*(y*srcBufferWidth+x)+2];
+			++redIt;
+			++greenIt;
+			++blueIt;}}}
 
 class ImpressionistUI;
 
@@ -35,6 +72,8 @@ public:
 	void	setBrushType(int type);			// called by the UI to set the brushType
 	int		getSize();						// get the UI size
 	void	setSize(int size);				// set the UI size
+	int		getAngle();						// get the UI angle
+	void	setAngle(int angle);			// set the UI angle
 	char*	getImageName();					// get the current image name
 	
 
@@ -59,7 +98,8 @@ public:
 	// The current active brush.
 	ImpBrush*			m_pCurrentBrush;	
 	// Size of the brush.
-	int m_nSize;							
+	int m_nSize;
+	int m_nAngle;							
 
 	ImpressionistUI*	m_pUI;
 

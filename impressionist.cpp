@@ -42,12 +42,13 @@ int main(int	argc,
 }
 
 // global functions
-float frand()
-{
-	return (float)rand()/RAND_MAX;
-}
+float frand(){
+	return (float)rand()/RAND_MAX;}
 
-int irand(int max)
-{
-	return rand()%max;
-}
+int irand(int max){
+	return rand()%max;}
+
+float ufRandMap(float val){
+	float randVal = frand();
+	int sign = randVal>0.5?1:-1;
+	return val*sign*randVal;}

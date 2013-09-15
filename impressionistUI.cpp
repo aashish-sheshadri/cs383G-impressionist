@@ -284,6 +284,16 @@ void ImpressionistUI::cb_sizeSlides(Fl_Widget* o, void* v)
 	((ImpressionistUI*)(o->user_data()))->m_nSize=int( ((Fl_Slider *)o)->value() ) ;
 }
 
+//-----------------------------------------------------------
+// Updates the brush angle to use from the value of the angle
+// slider
+// Called by the UI when the angle slider is moved
+//-----------------------------------------------------------
+void ImpressionistUI::cb_angleSlides(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nAngle=int( ((Fl_Slider *)o)->value() ) ;
+}
+
 //---------------------------------- per instance functions --------------------------------------
 
 //------------------------------------------------
@@ -341,6 +351,25 @@ void ImpressionistUI::setSize( int size )
 
 	if (size<=40) 
 		m_BrushSizeSlider->value(m_nSize);
+}
+
+//------------------------------------------------
+// Return the brush angle
+//------------------------------------------------
+int ImpressionistUI::getAngle()
+{
+	return m_nAngle;
+}
+
+//-------------------------------------------------
+// Set the brush size
+//-------------------------------------------------
+void ImpressionistUI::setAngle( int angle )
+{
+	m_nAngle=angle;
+
+	if (angle<=180) 
+		m_BrushSizeSlider->value(angle);
 }
 
 
@@ -408,6 +437,7 @@ ImpressionistUI::ImpressionistUI() {
 	// init values
 
 	m_nSize = 10;
+	m_nAngle = 45;
 
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
@@ -434,6 +464,19 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushSizeSlider->value(m_nSize);
 		m_BrushSizeSlider->align(FL_ALIGN_RIGHT);
 		m_BrushSizeSlider->callback(cb_sizeSlides);
+
+		// Add brush angle slider to the dialog 
+		m_BrushSizeSlider = new Fl_Value_Slider(10, 100, 300, 20, "Angle");
+		m_BrushSizeSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_BrushSizeSlider->type(FL_HOR_NICE_SLIDER);
+        m_BrushSizeSlider->labelfont(FL_COURIER);
+        m_BrushSizeSlider->labelsize(12);
+		m_BrushSizeSlider->minimum(0);
+		m_BrushSizeSlider->maximum(180);
+		m_BrushSizeSlider->step(1);
+		m_BrushSizeSlider->value(m_nAngle);
+		m_BrushSizeSlider->align(FL_ALIGN_RIGHT);
+		m_BrushSizeSlider->callback(cb_angleSlides);
 
     m_brushDialog->end();	
 

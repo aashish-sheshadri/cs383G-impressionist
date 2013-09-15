@@ -17,7 +17,11 @@
 
 // Include individual brush headers here.
 #include "pointBrush.h"
-
+#include "lineBrush.h"
+#include "circleBrush.h"
+#include "sPointsBrush.h"
+#include "sCirclesBrush.h"
+#include "sLinesBrush.h"
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
 
@@ -40,15 +44,15 @@ ImpressionistDoc::ImpressionistDoc()
 
 	// Note: You should implement these 5 brushes.  They are set the same (PointBrush) for now
 	ImpBrush::c_pBrushes[BRUSH_LINES]				
-		= new PointBrush( this, "Lines" );
+		= new LineBrush( this, "Lines" );
 	ImpBrush::c_pBrushes[BRUSH_CIRCLES]				
-		= new PointBrush( this, "Circles" );
+		= new CircleBrush( this, "Circles" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_POINTS]	
-		= new PointBrush( this, "Scattered Points" );
+		= new SPointsBrush( this, "Scattered Points" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_LINES]		
-		= new PointBrush( this, "Scattered Lines" );
+		= new SLinesBrush( this, "Scattered Lines" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CIRCLES]	
-		= new PointBrush( this, "Scattered Circles" );
+		= new SCirclesBrush( this, "Scattered Circles" );
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];
@@ -87,6 +91,14 @@ void ImpressionistDoc::setBrushType(int type)
 int ImpressionistDoc::getSize()
 {
 	return m_pUI->getSize();
+}
+
+//---------------------------------------------------------
+// Returns the angle of the brush.
+//---------------------------------------------------------
+int ImpressionistDoc::getAngle()
+{
+	return m_pUI->getAngle();
 }
 
 //---------------------------------------------------------
@@ -217,6 +229,22 @@ void ImpressionistDoc::applyFilter( const unsigned char* sourceBuffer,
 		int knlWidth, int knlHeight, 
 		double divisor, double offset )
 {
+	for(int i=0;i<srcBufferHeight;++i){
+		for(int j=0;j<srcBufferWidth;++j){
+			std::vector<unsigned char> neighboursRed(knlWidth*knlHeight,0); 
+			std::vector<unsigned char> neighboursGreen(knlWidth*knlHeight,0); 
+			std::vector<unsigned char> neighboursBlue(knlWidth*knlHeight,0); 
+			
+			loadNeighbours(i,j,knlWidth,knlHeight,sourceBuffer,srcBufferWidth,srcBufferHeight,neighboursRed.begin(),
+				neighboursGreen.begin(),neighboursBlue.begin());
+
+			std::transform(neighboursRed.begin(),neighboursRed.end(),filterKernel,neighboursRed.begin(),std::plus<unsigned char>());
+			std::transform(neighboursGreen.begin(),neighboursGreen.end(),filterKernel,neighboursGreen.begin(),std::plus<unsigned char>());
+			std::transform(neighboursBlue.begin(),neighboursBlue.end(),filterKernel,neighboursBlue.begin(),std::plus<unsigned char>());
+			
+			destBuffer[3*(i*srcBufferHeight+j)+0] = ((double)std::accumulate(neighboursRed.begin(),neighboursRed.end(),0)/divisor) + offset;
+			destBuffer[3*(i*srcBufferHeight+j)+1] = ((double)std::accumulate(neighboursGreen.begin(),neighboursGreen.end(),0)/divisor) + offset;
+			destBuffer[3*(i*srcBufferHeight+j)+2] = ((double)std::accumulate(neighboursBlue.begin(),neighboursBlue.end(),0)/divisor) + offset;}}
 	// This needs to be implemented for image filtering to work.
 
 
