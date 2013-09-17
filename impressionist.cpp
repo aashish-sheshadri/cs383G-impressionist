@@ -51,4 +51,5 @@ int irand(int max){
 float ufRandMap(float val){
 	float randVal = frand();
 	int sign = randVal>0.5?1:-1;
+	randVal = randVal>0.3?frand()*randVal:randVal;
 	return val*sign*randVal;}

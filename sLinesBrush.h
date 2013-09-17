@@ -13,6 +13,7 @@
 
 class SLinesBrush : public ImpBrush
 {
+	Point prevPoint;
 public:
 	SLinesBrush( ImpressionistDoc* pDoc = NULL, const char* name = NULL );
 

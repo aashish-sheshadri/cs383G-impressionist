@@ -12,6 +12,7 @@
 #include <FL/gl.h>
 #include <FL/glu.h>
 #include <stdlib.h>
+#include "originalView.h"
 
 class ImpressionistDoc;
 
@@ -31,7 +32,7 @@ public:
 	void RestoreContent();
 
 	ImpressionistDoc *m_pDoc;
-
+	originalView *m_origView;
 private:
 	GLvoid* m_pPaintBitstart;
 	int		m_nDrawWidth,

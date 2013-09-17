@@ -8,22 +8,24 @@
 #include "impressionistDoc.h"
 #include "impressionistUI.h"
 #include "lineBrush.h"
-#include <cmath>
+
 extern float frand();
 
 LineBrush::LineBrush( ImpressionistDoc* pDoc, const char* name ) :
-	ImpBrush(pDoc,name)
-{
-}
+	ImpBrush(pDoc,name){}
 
 void LineBrush::BrushBegin( const Point source, const Point target )
 {
 	ImpressionistDoc* pDoc = GetDocument();
 	ImpressionistUI* dlg=pDoc->m_pUI;
-	int size = pDoc->getSize();
-	glLineWidth ((float)size);
-	BrushMove( source, target );
-}
+	int angleChoice = pDoc->getAngleChoice();
+	if(angleChoice == 0){
+		prevPoint = target;
+	} else if (angleChoice == 1){
+
+	} else {
+		BrushMove( source, target );
+	}}
 
 void LineBrush::BrushMove( const Point source, const Point target )
 {
@@ -34,12 +36,31 @@ void LineBrush::BrushMove( const Point source, const Point target )
 		printf( "LineBrush::BrushMove  document is NULL\n" );
 		return;
 	}
-	
-	int angle = pDoc->getAngle();
-	float rad = (M_PI * (float)angle)/(float)180;
+
+	float rad;
+	int angleChoice = pDoc->getAngleChoice();
+	if(angleChoice == 0){
+		
+		float numer = target.y-prevPoint.y;
+		float den = target.x-prevPoint.x;
+		if(numer == 0){
+			rad = 0;
+		} else if(den == 0){
+			rad = (M_PI * 90)/(float)180;
+		} else {
+			rad = std::atan(numer/den);}
+		prevPoint = target;
+	} else if (angleChoice == 1){
+
+	} else {
+		int angle = pDoc->getAngle();
+		rad = (M_PI * (float)angle)/(float)180;}
+
+	int size = pDoc->getSize();
+	glLineWidth ((float)size/4);
 	Point begin = target;
 	Point end = target;
-	int magnitude = 20;
+	int magnitude = size/2;
 	float dX = magnitude*std::cos(rad);
 	float dY = magnitude*std::sin(rad);
 

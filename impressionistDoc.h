@@ -70,6 +70,8 @@ public:
 		double divisor, double offset );
 
 	void	setBrushType(int type);			// called by the UI to set the brushType
+	void	setAngleChoice(int type);			// called by the UI to set the brushType
+	int		getAngleChoice();			// called by the UI to set the brushType
 	int		getSize();						// get the UI size
 	void	setSize(int size);				// set the UI size
 	int		getAngle();						// get the UI angle
@@ -99,7 +101,8 @@ public:
 	ImpBrush*			m_pCurrentBrush;	
 	// Size of the brush.
 	int m_nSize;
-	int m_nAngle;							
+	int m_nAngle;
+	int m_pAngleChoice;							
 
 	ImpressionistUI*	m_pUI;
 

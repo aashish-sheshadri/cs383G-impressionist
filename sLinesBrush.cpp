@@ -20,10 +20,14 @@ void SLinesBrush::BrushBegin( const Point source, const Point target )
 {
 	ImpressionistDoc* pDoc = GetDocument();
 	ImpressionistUI* dlg=pDoc->m_pUI;
-	int size = pDoc->getSize();
-	glLineWidth ((float)size);
-	BrushMove( source, target );
-}
+	int angleChoice = pDoc->getAngleChoice();
+	if(angleChoice == 0){
+		prevPoint = target;
+	} else if (angleChoice == 1){
+
+	} else {
+		BrushMove( source, target );
+	}}
 
 void SLinesBrush::BrushMove( const Point source, const Point target )
 {
@@ -35,17 +39,36 @@ void SLinesBrush::BrushMove( const Point source, const Point target )
 		return;
 	}
 	
-	int angle = pDoc->getAngle();
-	float rad = (M_PI * (float)angle)/(float)180;
+	float rad;
+	int angleChoice = pDoc->getAngleChoice();
+	if(angleChoice == 0){
+		
+		float numer = target.y-prevPoint.y;
+		float den = target.x-prevPoint.x;
+		if(numer == 0){
+			rad = 0;
+		} else if(den == 0){
+			rad = (M_PI * 90)/(float)180;
+		} else {
+			rad = std::atan(numer/den);}
+		prevPoint = target;
+	} else if (angleChoice == 1){
+
+	} else {
+		int angle = pDoc->getAngle();
+		rad = (M_PI * (float)angle)/(float)180;}
+
+	int size = pDoc->getSize();
 	Point begin = target;
 	Point end = target;
-	int magnitude = 20;
+	int magnitude = size/2;
 	float dX = magnitude*std::cos(rad);
 	float dY = magnitude*std::sin(rad);
 
 
-	const int scatterRad = 10;
-	const int scatterSize = 10;
+	const int scatterRad = size/2;
+	const int scatterSize = size;
+	glLineWidth ((float)size/(float)scatterSize);
 	std::vector<float> offsetsX(scatterSize,scatterRad);
 	std::vector<float> offsetsY(scatterSize,scatterRad);
 	std::transform(offsetsX.begin(),offsetsX.end(),offsetsX.begin(),ufRandMap);
@@ -56,6 +79,8 @@ void SLinesBrush::BrushMove( const Point source, const Point target )
 
 		std::vector<float>::iterator itX = offsetsX.begin();
 		std::vector<float>::iterator itY = offsetsY.begin();
+		glVertex2d( target.x + dX, target.y + dY);
+		glVertex2d( target.x - dX, target.y - dY);
 		for(int i = 0;i<scatterSize;++i){
 			glVertex2d( target.x + *itX + dX, target.y + *itY + dY);
 			glVertex2d( target.x + *itX - dX, target.y + *itY - dY);

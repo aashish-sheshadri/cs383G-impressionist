@@ -8,9 +8,10 @@
 #define LINEBRUSH_H
 
 #include "impBrush.h"
-
+#include <cmath>
 class LineBrush : public ImpBrush
 {
+	Point prevPoint;
 public:
 	LineBrush( ImpressionistDoc* pDoc = NULL, const char* name = NULL );
 

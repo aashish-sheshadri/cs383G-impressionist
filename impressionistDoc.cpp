@@ -86,6 +86,18 @@ void ImpressionistDoc::setBrushType(int type)
 }
 
 //---------------------------------------------------------
+// Called by the UI when the user changes the angle.
+// type: one of the defined brush types.
+//---------------------------------------------------------
+void ImpressionistDoc::setAngleChoice(int type){
+	m_pAngleChoice = type;
+}
+
+int ImpressionistDoc::getAngleChoice(){
+	return m_pAngleChoice;
+}
+
+//---------------------------------------------------------
 // Returns the size of the brush.
 //---------------------------------------------------------
 int ImpressionistDoc::getSize()

@@ -22,11 +22,11 @@ void SCirclesBrush::BrushBegin( const Point source, const Point target )
 	ImpressionistDoc* pDoc = GetDocument();
 	ImpressionistUI* dlg=pDoc->m_pUI;
 
-	int size = pDoc->getSize();
+	
 
 	glEnable(GL_POINT_SMOOTH);
 	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-	glPointSize( (float)size );
+	
 
 	BrushMove( source, target );
 }
@@ -40,8 +40,12 @@ void SCirclesBrush::BrushMove( const Point source, const Point target )
 		printf( "SCirclesBrush::BrushMove  document is NULL\n" );
 		return;
 	}
-	const int scatterRad = 10;
-	const int scatterSize = 10;
+
+	int size = pDoc->getSize();
+	const int scatterRad = size/2;
+	const int scatterSize = size;
+	
+	glPointSize( (float)size/(float)(scatterRad*5));
 	std::vector<float> offsetsX(scatterSize,scatterRad);
 	std::vector<float> offsetsY(scatterSize,scatterRad);
 	std::transform(offsetsX.begin(),offsetsX.end(),offsetsX.begin(),ufRandMap);
@@ -51,6 +55,7 @@ void SCirclesBrush::BrushMove( const Point source, const Point target )
 		
 		std::vector<float>::iterator itX = offsetsX.begin();
 		std::vector<float>::iterator itY = offsetsY.begin();
+		glVertex2d( target.x, target.y);
 		for(int i = 0;i<scatterSize;++i){
 			glVertex2d( target.x + *itX, target.y + *itY );
 			++itX;
