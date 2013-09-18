@@ -91,4 +91,18 @@ void OriginalView::resizeWindow(int	width,
 	resize(x(), y(), width, height);
 }
 
+void OriginalView::drawMarker(Point source){
+	// activate();
+	// float dX = 20;
+	// float dY = 20;
+	// glBegin( GL_LINES );
+	// 	glColor3f(1.0, 0.0, 0.0);
+	// 	glVertex2d( source.x -50 + dX, source.y + dY);
+	// 	glVertex2d( source.x -50 - dX, source.y - dY);
+	// 	glVertex2d( source.x - dX, source.y + dY);
+	// 	glVertex2d( source.x + dX, source.y - dY);
+	// glEnd();
+}
+
+
 

@@ -14,10 +14,21 @@
 #include <stdlib.h>
 #include "originalView.h"
 
+template <typename II,typename OI>
+void copyImage(II orig, OI dup, unsigned int size){
+	const unsigned char alpha = 50;
+	for(unsigned int i = 0;i<size;++i){
+		*(dup+4*i+0) = *(orig+3*i+0);
+		*(dup+4*i+1) = *(orig+3*i+1);
+		*(dup+4*i+2) = *(orig+3*i+2);
+		*(dup+4*i+3) = alpha;}}
+
 class ImpressionistDoc;
 
 class PaintView : public Fl_Gl_Window
 {
+	OriginalView *m_origView;
+	void drawTransparent();
 public:
 	PaintView(int x, int y, int w, int h, const char* l);
 	void draw();
@@ -32,7 +43,9 @@ public:
 	void RestoreContent();
 
 	ImpressionistDoc *m_pDoc;
-	originalView *m_origView;
+
+	void setOrigView(OriginalView*);
+	OriginalView* getOrigView();
 private:
 	GLvoid* m_pPaintBitstart;
 	int		m_nDrawWidth,

@@ -36,9 +36,7 @@ PaintView::PaintView(int			x,
 						: Fl_Gl_Window(x,y,w,h,l)
 {
 	m_nWindowWidth	= w;
-	m_nWindowHeight	= h;
-
-}
+	m_nWindowHeight	= h;}
 
 
 void PaintView::draw()
@@ -94,25 +92,38 @@ void PaintView::draw()
 
 	if ( m_pDoc->m_ucPainting && isAnEvent) 
 	{
+		static bool drawTrans = true;
+		if(drawTrans){
+			drawTransparent();
+			drawTrans = false;}
 
 		// Clear it after processing.
 		isAnEvent	= 0;	
 
 		Point source( coord.x + m_nStartCol, m_nEndRow - coord.y );
 		Point target( coord.x, m_nWindowHeight - coord.y );
-		
 		// This is the event handler
 		switch (eventToDo) 
 		{
 		case LEFT_MOUSE_DOWN:
+			m_pDoc->m_pUI->m_origView->drawMarker(source);
+			// getOrigView()->drawMarker(source);
 			m_pDoc->m_pCurrentBrush->BrushBegin( source, target );
+			// getOrigView()->refresh();
+			m_pDoc->m_pUI->m_origView->refresh();
 			break;
 		case LEFT_MOUSE_DRAG:
+			m_pDoc->m_pUI->m_origView->drawMarker(source);
+			// getOrigView()->drawMarker(source);
 			m_pDoc->m_pCurrentBrush->BrushMove( source, target );
+			// getOrigView()->refresh();
+			m_pDoc->m_pUI->m_origView->refresh();
 			break;
 		case LEFT_MOUSE_UP:
 			m_pDoc->m_pCurrentBrush->BrushEnd( source, target );
 
+			// getOrigView()->refresh();
+			m_pDoc->m_pUI->m_origView->refresh();
 			SaveCurrentContent();
 			RestoreContent();
 			break;
@@ -239,4 +250,42 @@ void PaintView::RestoreContent()
 
 //	glDrawBuffer(GL_FRONT);
 }
+
+OriginalView* PaintView::getOrigView(){
+	return m_origView;
+}
+
+void PaintView::setOrigView(OriginalView* that){
+	this->m_origView = that;
+}
+
+void PaintView::drawTransparent(){
+	unsigned char* alphaImage = new unsigned char[m_pDoc->m_nWidth * m_pDoc->m_nHeight *4 ];
+	if ( m_pDoc->m_ucBitmap ){
+		copyImage(m_pDoc->m_ucBitmap,alphaImage, m_pDoc->m_nWidth * m_pDoc->m_nHeight);
+		int drawWidth, drawHeight;
+		GLvoid* bitstart;
+
+		// we are not using a scrollable window, so ignore it
+		Point scrollpos;	// = GetScrollPosition();
+		scrollpos.x=scrollpos.y=0;
+
+		drawWidth	= min( m_nWindowWidth, m_pDoc->m_nWidth );
+		drawHeight	= min( m_nWindowHeight, m_pDoc->m_nHeight );
+
+		int	startrow	= m_pDoc->m_nHeight - (scrollpos.y + drawHeight);
+		if ( startrow < 0 ) 
+			startrow = 0;
+
+
+		bitstart = alphaImage + 4 * ((m_pDoc->m_nWidth * startrow) + scrollpos.x);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable( GL_BLEND );
+		// just copy image to GLwindow conceptually
+		glRasterPos2i( 0, m_nWindowHeight - drawHeight );
+		glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
+		glPixelStorei( GL_UNPACK_ROW_LENGTH, m_pDoc->m_nWidth );
+		glDrawBuffer( GL_BACK );
+		glDrawPixels( drawWidth, drawHeight, GL_RGBA, GL_UNSIGNED_BYTE, bitstart );}
+	delete [] alphaImage;}
 

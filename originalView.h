@@ -26,6 +26,7 @@ public:
 	
 	void draw();
 	void refresh();
+	void drawMarker(Point source);
 
 	void resizeWindow(int width, int height);
 

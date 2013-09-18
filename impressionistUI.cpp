@@ -451,7 +451,10 @@ ImpressionistUI::ImpressionistUI() {
 			// install original view window
 			m_origView = new OriginalView(0, 25, 300, 275, "This is the orig view");//300jon
 			m_origView->box(FL_DOWN_FRAME);
-			m_origView->deactivate();
+			// m_origView->deactivate();
+
+			m_paintView->setOrigView(m_origView);
+			
 
 		group->end();
 		Fl_Group::current()->resizable(group);
