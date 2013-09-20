@@ -229,7 +229,12 @@ void ImpressionistUI::cb_exit(Fl_Menu_* o, void* v)
 {
 	whoami(o)->m_mainWindow->hide();
 	whoami(o)->m_brushDialog->hide();
+	whoami(o)->m_filterDialog->hide();
+}
 
+void ImpressionistUI::cb_filter(Fl_Menu_* o, void* v) 
+{
+	whoami(o)->m_filterDialog->show();
 }
 
 
@@ -391,10 +396,11 @@ void ImpressionistUI::setAngle( int angle )
 
 // Main menu definition
 Fl_Menu_Item ImpressionistUI::menuitems[] = {
-	{ "&File",		0, 0, 0, FL_SUBMENU },
+	{ "&File", 0, 0, 0, FL_SUBMENU },
 		{ "&Load Image...",	FL_ALT + 'l', (Fl_Callback *)ImpressionistUI::cb_load_image },
 		{ "&Save Image...",	FL_ALT + 's', (Fl_Callback *)ImpressionistUI::cb_save_image },
-		{ "&Brushes...",	FL_ALT + 'b', (Fl_Callback *)ImpressionistUI::cb_brushes }, 
+		{ "&Brushes...",	FL_ALT + 'b', (Fl_Callback *)ImpressionistUI::cb_brushes },
+		{ "&Filter...",	FL_ALT + 'f', (Fl_Callback *)ImpressionistUI::cb_filter }, 
 		{ "&Clear Canvas", FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_clear_canvas, 0, FL_MENU_DIVIDER },
 		
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
@@ -509,9 +515,253 @@ ImpressionistUI::ImpressionistUI() {
     m_brushDialog->end();	
 
     // filter dialog definition 
+    std::fill(fltKernel,fltKernel+(FLT_WIDTH*FLT_HEIGHT)-1,0.0f);
+    m_filterDialog = new Fl_Window(400, 200, "Filter Dialog");
+
+    	m_ApplyFilterButton = new Fl_Button(30,170,100,25,"&Apply Filter");
+		m_ApplyFilterButton->user_data((void*)(this));
+		m_ApplyFilterButton->callback(cb_apply_filter_button);
+
+		m_PreviewFilterButton = new Fl_Button(150,170,100,25,"&Preview Filter");
+		m_PreviewFilterButton->user_data((void*)(this));
+		m_PreviewFilterButton->callback(cb_preview_filter_button);
+
+		m_CancelFilterButton = new Fl_Button(270,170,100,25,"&Cancel");
+		m_CancelFilterButton->user_data((void*)(this));
+		m_CancelFilterButton->callback(cb_cancel_filter_button);
+
+		Fl_Float_Input* scaleInput = new Fl_Float_Input(50, 80, 40, 20,"&Scale");
+		scaleInput->user_data((void*)(this)); 
+		scaleInput->callback(cb_scaleInput);
+		
+		Fl_Float_Input* offsetInput = new Fl_Float_Input(50, 100, 40, 20,"Offset");
+		offsetInput->user_data((void*)(this)); 
+		offsetInput->callback(cb_offsetInput);
+
+    	Fl_Float_Input* filterInput_00 = new Fl_Float_Input(100, 50, 50, 20);
+		filterInput_00->user_data((void*)(this)); 
+		filterInput_00->callback(cb_filterInput_00);
+
+		Fl_Float_Input* filterInput_01 = new Fl_Float_Input(150, 50, 50, 20);
+		filterInput_01->user_data((void*)(this)); 
+		filterInput_01->callback(cb_filterInput_01);
+
+		Fl_Float_Input* filterInput_02 = new Fl_Float_Input(200, 50, 50, 20);
+		filterInput_02->user_data((void*)(this)); 
+		filterInput_02->callback(cb_filterInput_02);
+
+		Fl_Float_Input* filterInput_03 = new Fl_Float_Input(250, 50, 50, 20);
+		filterInput_03->user_data((void*)(this)); 
+		filterInput_03->callback(cb_filterInput_03);
+
+		Fl_Float_Input* filterInput_04 = new Fl_Float_Input(300, 50, 50, 20);
+		filterInput_04->user_data((void*)(this)); 
+		filterInput_04->callback(cb_filterInput_04);
+
+		Fl_Float_Input* filterInput_10 = new Fl_Float_Input(100, 70, 50, 20);
+		filterInput_10->user_data((void*)(this)); 
+		filterInput_10->callback(cb_filterInput_10);
+
+		Fl_Float_Input* filterInput_11 = new Fl_Float_Input(150, 70, 50, 20);
+		filterInput_11->user_data((void*)(this)); 
+		filterInput_11->callback(cb_filterInput_11);
+
+		Fl_Float_Input* filterInput_12 = new Fl_Float_Input(200, 70, 50, 20);
+		filterInput_12->user_data((void*)(this)); 
+		filterInput_12->callback(cb_filterInput_12);
+
+		Fl_Float_Input* filterInput_13 = new Fl_Float_Input(250, 70, 50, 20);
+		filterInput_13->user_data((void*)(this)); 
+		filterInput_13->callback(cb_filterInput_13);
+
+		Fl_Float_Input* filterInput_14 = new Fl_Float_Input(300, 70, 50, 20);
+		filterInput_14->user_data((void*)(this)); 
+		filterInput_14->callback(cb_filterInput_14);
+
+		Fl_Float_Input* filterInput_20 = new Fl_Float_Input(100, 90, 50, 20);
+		filterInput_20->user_data((void*)(this)); 
+		filterInput_20->callback(cb_filterInput_20);
+
+		Fl_Float_Input* filterInput_21 = new Fl_Float_Input(150, 90, 50, 20);
+		filterInput_21->user_data((void*)(this)); 
+		filterInput_21->callback(cb_filterInput_21);
+
+		Fl_Float_Input* filterInput_22 = new Fl_Float_Input(200, 90, 50, 20);
+		filterInput_22->user_data((void*)(this)); 
+		filterInput_22->callback(cb_filterInput_22);
+
+		Fl_Float_Input* filterInput_23 = new Fl_Float_Input(250, 90, 50, 20);
+		filterInput_23->user_data((void*)(this)); 
+		filterInput_23->callback(cb_filterInput_23);
+
+		Fl_Float_Input* filterInput_24 = new Fl_Float_Input(300, 90, 50, 20);
+		filterInput_24->user_data((void*)(this)); 
+		filterInput_24->callback(cb_filterInput_24);
+
+		Fl_Float_Input* filterInput_30 = new Fl_Float_Input(100, 110, 50, 20);
+		filterInput_30->user_data((void*)(this)); 
+		filterInput_30->callback(cb_filterInput_30);
+
+		Fl_Float_Input* filterInput_31 = new Fl_Float_Input(150, 110, 50, 20);
+		filterInput_31->user_data((void*)(this)); 
+		filterInput_31->callback(cb_filterInput_31);
+
+		Fl_Float_Input* filterInput_32 = new Fl_Float_Input(200, 110, 50, 20);
+		filterInput_32->user_data((void*)(this)); 
+		filterInput_32->callback(cb_filterInput_32);
+
+		Fl_Float_Input* filterInput_33 = new Fl_Float_Input(250, 110, 50, 20);
+		filterInput_33->user_data((void*)(this)); 
+		filterInput_33->callback(cb_filterInput_33);
+
+		Fl_Float_Input* filterInput_34 = new Fl_Float_Input(300, 110, 50, 20);
+		filterInput_34->user_data((void*)(this)); 
+		filterInput_34->callback(cb_filterInput_34);
+
+		Fl_Float_Input* filterInput_40 = new Fl_Float_Input(100, 130, 50, 20);
+		filterInput_40->user_data((void*)(this)); 
+		filterInput_40->callback(cb_filterInput_40);
+
+		Fl_Float_Input* filterInput_41 = new Fl_Float_Input(150, 130, 50, 20);
+		filterInput_41->user_data((void*)(this)); 
+		filterInput_41->callback(cb_filterInput_41);
+
+		Fl_Float_Input* filterInput_42 = new Fl_Float_Input(200, 130, 50, 20);
+		filterInput_42->user_data((void*)(this)); 
+		filterInput_42->callback(cb_filterInput_42);
+
+		Fl_Float_Input* filterInput_43 = new Fl_Float_Input(250, 130, 50, 20);
+		filterInput_43->user_data((void*)(this)); 
+		filterInput_43->callback(cb_filterInput_43);
+
+		Fl_Float_Input* filterInput_44 = new Fl_Float_Input(300, 130, 50, 20);
+		filterInput_44->user_data((void*)(this)); 
+		filterInput_44->callback(cb_filterInput_44);
+
+
+    m_filterDialog->end();	
 
 
 }
+void ImpressionistUI::cb_apply_filter_button(Fl_Widget* o, void* v){
+
+}
+
+void ImpressionistUI::cb_preview_filter_button(Fl_Widget* o, void* v){
+
+}
+
+void ImpressionistUI::cb_cancel_filter_button(Fl_Widget* o, void* v){
+
+}
+
+void ImpressionistUI::cb_scaleInput(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->scale = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_offsetInput(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->offset = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_00(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[0] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_01(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[1] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_02(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[2] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_03(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[3] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_04(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[4] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_10(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[5] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_11(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[6] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_12(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[7] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_13(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[8] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_14(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[9] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_20(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[10] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_21(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[11] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_22(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[12] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_23(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[13] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_24(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[14] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_30(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[15] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_31(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[16] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_32(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[17] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_33(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[18] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_34(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[19] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_40(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[20] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_41(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[21] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_42(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[22] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_43(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[23] = atof(((Fl_Float_Input *)o)->value());}
+
+void ImpressionistUI::cb_filterInput_44(Fl_Widget* o, void* v)
+{
+	(((ImpressionistUI*)(o->user_data()))->fltKernel)[24] = atof(((Fl_Float_Input *)o)->value());}
 
 ImpressionistUI::~ImpressionistUI()
 {

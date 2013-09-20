@@ -16,12 +16,16 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Color_Chooser.H>
+#include <FL/Fl_Float_Input.H>
 
 #include "impressionist.h"
 #include "originalView.h"
 #include "paintView.h"
 
 #include "impBrush.h"
+
+#include <cstdlib>
+#include <algorithm>
 
 const int FLT_WIDTH = 5;
 const int FLT_HEIGHT = 5;
@@ -50,7 +54,9 @@ public:
 
 // for filter dialog
 	Fl_Window*			m_filterDialog;
-	Fl_Choice*			m_FilterTypeChoice;
+	Fl_Button* 			m_ApplyFilterButton;
+	Fl_Button* 			m_PreviewFilterButton;
+	Fl_Button* 			m_CancelFilterButton;
 
 
 	// Member functions
@@ -113,7 +119,39 @@ private:
 	static void	cb_sizeSlides(Fl_Widget* o, void* v);
 	static void	cb_angleSlides(Fl_Widget* o, void* v);
 	static void	cb_angleChoice(Fl_Widget* o, void* v);
-
+	static void cb_filter(Fl_Menu_* o, void* v);
+	
+	//filter callbacks
+	static void	cb_apply_filter_button(Fl_Widget* o, void* v);
+	static void	cb_preview_filter_button(Fl_Widget* o, void* v);
+	static void	cb_cancel_filter_button(Fl_Widget* o, void* v);
+	static void cb_scaleInput(Fl_Widget* o, void* v);
+	static void cb_offsetInput(Fl_Widget* o, void* v);
+	static void cb_filterInput_00(Fl_Widget* o, void* v);
+	static void cb_filterInput_01(Fl_Widget* o, void* v);
+	static void cb_filterInput_02(Fl_Widget* o, void* v);
+	static void cb_filterInput_03(Fl_Widget* o, void* v);
+	static void cb_filterInput_04(Fl_Widget* o, void* v);
+	static void cb_filterInput_10(Fl_Widget* o, void* v);
+	static void cb_filterInput_11(Fl_Widget* o, void* v);
+	static void cb_filterInput_12(Fl_Widget* o, void* v);
+	static void cb_filterInput_13(Fl_Widget* o, void* v);
+	static void cb_filterInput_14(Fl_Widget* o, void* v);
+	static void cb_filterInput_20(Fl_Widget* o, void* v);
+	static void cb_filterInput_21(Fl_Widget* o, void* v);
+	static void cb_filterInput_22(Fl_Widget* o, void* v);
+	static void cb_filterInput_23(Fl_Widget* o, void* v);
+	static void cb_filterInput_24(Fl_Widget* o, void* v);
+	static void cb_filterInput_30(Fl_Widget* o, void* v);
+	static void cb_filterInput_31(Fl_Widget* o, void* v);
+	static void cb_filterInput_32(Fl_Widget* o, void* v);
+	static void cb_filterInput_33(Fl_Widget* o, void* v);
+	static void cb_filterInput_34(Fl_Widget* o, void* v);
+	static void cb_filterInput_40(Fl_Widget* o, void* v);
+	static void cb_filterInput_41(Fl_Widget* o, void* v);
+	static void cb_filterInput_42(Fl_Widget* o, void* v);
+	static void cb_filterInput_43(Fl_Widget* o, void* v);
+	static void cb_filterInput_44(Fl_Widget* o, void* v);
 };
 
 #endif

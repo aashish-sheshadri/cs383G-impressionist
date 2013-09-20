@@ -38,6 +38,9 @@ PaintView::PaintView(int			x,
 	m_nWindowWidth	= w;
 	m_nWindowHeight	= h;}
 
+PaintView::~PaintView(){
+	if(alphaImage!=NULL)
+		delete []alphaImage;}
 
 void PaintView::draw()
 {
@@ -250,6 +253,10 @@ void PaintView::RestoreContent()
 }
 
 void PaintView::drawTransparent(){
+	static int numCalls = 0;
+	++numCalls;
+	if(numCalls>1)
+		return;
 	unsigned char* alphaImage = new unsigned char[m_pDoc->m_nWidth * m_pDoc->m_nHeight *4 ];
 	if ( m_pDoc->m_ucBitmap ){
 		copyImage(m_pDoc->m_ucBitmap,alphaImage, m_pDoc->m_nWidth * m_pDoc->m_nHeight);
@@ -270,12 +277,15 @@ void PaintView::drawTransparent(){
 
 		bitstart = alphaImage + 4 * ((m_pDoc->m_nWidth * startrow) + scrollpos.x);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		// glBlendFunc(GL_ZERO, GL_SRC1_ALPHA);
+		// glBlendFunc(GL_SRC1_COLOR, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable( GL_BLEND );
 		// just copy image to GLwindow conceptually
 		glRasterPos2i( 0, m_nWindowHeight - drawHeight );
 		glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 		glPixelStorei( GL_UNPACK_ROW_LENGTH, m_pDoc->m_nWidth );
 		glDrawBuffer( GL_BACK );
-		glDrawPixels( drawWidth, drawHeight, GL_RGBA, GL_UNSIGNED_BYTE, bitstart );}
-	delete [] alphaImage;}
+		glDrawPixels( drawWidth, drawHeight, GL_RGBA, GL_UNSIGNED_BYTE, bitstart );
+		// glDisable(GL_BLEND);
+	}}
 

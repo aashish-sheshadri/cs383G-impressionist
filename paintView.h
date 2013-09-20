@@ -31,6 +31,7 @@ class PaintView : public Fl_Gl_Window
 	void drawTransparent();
 public:
 	PaintView(int x, int y, int w, int h, const char* l);
+	~PaintView();
 	void draw();
 	int handle(int event);
 
@@ -44,6 +45,7 @@ public:
 
 	ImpressionistDoc *m_pDoc;
 private:
+	unsigned char* alphaImage;
 	GLvoid* m_pPaintBitstart;
 	int		m_nDrawWidth,
 			m_nDrawHeight,

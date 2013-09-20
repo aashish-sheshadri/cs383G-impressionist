@@ -26,17 +26,18 @@ public:
 	
 	void draw();
 	void refresh();
-	void drawMarker();
-
 	void resizeWindow(int width, int height);
 
 	ImpressionistDoc*	m_pDoc;
 	void setMarker(bool bMarker, Point source = Point());
 private:
+
 	int	m_nWindowWidth, 
 		m_nWindowHeight;
 	bool bMarker;
 	Point marker;
+
+	void drawMarker();
 
 };
 
