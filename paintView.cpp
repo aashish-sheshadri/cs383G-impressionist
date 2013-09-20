@@ -106,24 +106,22 @@ void PaintView::draw()
 		switch (eventToDo) 
 		{
 		case LEFT_MOUSE_DOWN:
-			m_pDoc->m_pUI->m_origView->drawMarker(source);
-			// getOrigView()->drawMarker(source);
-			m_pDoc->m_pCurrentBrush->BrushBegin( source, target );
-			// getOrigView()->refresh();
+			m_pDoc->m_pUI->m_origView->setMarker(true, source);
 			m_pDoc->m_pUI->m_origView->refresh();
+			m_pDoc->m_pCurrentBrush->BrushBegin( source, target );
+
 			break;
 		case LEFT_MOUSE_DRAG:
-			m_pDoc->m_pUI->m_origView->drawMarker(source);
-			// getOrigView()->drawMarker(source);
+			m_pDoc->m_pUI->m_origView->setMarker(true, source);
+
 			m_pDoc->m_pCurrentBrush->BrushMove( source, target );
-			// getOrigView()->refresh();
+
 			m_pDoc->m_pUI->m_origView->refresh();
 			break;
 		case LEFT_MOUSE_UP:
-			m_pDoc->m_pCurrentBrush->BrushEnd( source, target );
-
-			// getOrigView()->refresh();
+			m_pDoc->m_pUI->m_origView->setMarker(false);
 			m_pDoc->m_pUI->m_origView->refresh();
+			m_pDoc->m_pCurrentBrush->BrushEnd( source, target );
 			SaveCurrentContent();
 			RestoreContent();
 			break;
@@ -248,15 +246,7 @@ void PaintView::RestoreContent()
 				  GL_UNSIGNED_BYTE, 
 				  m_pPaintBitstart);
 
-//	glDrawBuffer(GL_FRONT);
-}
-
-OriginalView* PaintView::getOrigView(){
-	return m_origView;
-}
-
-void PaintView::setOrigView(OriginalView* that){
-	this->m_origView = that;
+	glDrawBuffer(GL_FRONT);
 }
 
 void PaintView::drawTransparent(){

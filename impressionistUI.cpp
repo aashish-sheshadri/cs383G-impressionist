@@ -453,9 +453,6 @@ ImpressionistUI::ImpressionistUI() {
 			m_origView->box(FL_DOWN_FRAME);
 			// m_origView->deactivate();
 
-			m_paintView->setOrigView(m_origView);
-			
-
 		group->end();
 		Fl_Group::current()->resizable(group);
     m_mainWindow->end();

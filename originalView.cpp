@@ -21,6 +21,7 @@ OriginalView::OriginalView(int			x,
 {
 	m_nWindowWidth	= w;
 	m_nWindowHeight	= h;
+	bMarker = false;
 
 }
 
@@ -73,9 +74,10 @@ void OriginalView::draw()
 		glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 		glPixelStorei( GL_UNPACK_ROW_LENGTH, m_pDoc->m_nWidth );
 		glDrawBuffer( GL_BACK );
-		glDrawPixels( drawWidth, drawHeight, GL_RGB, GL_UNSIGNED_BYTE, bitstart );
+		glDrawPixels( drawWidth, drawHeight, GL_RGB, GL_UNSIGNED_BYTE, bitstart );}
 
-	}
+		if(bMarker)
+			drawMarker();
 			
 	glFlush();
 }
@@ -91,18 +93,20 @@ void OriginalView::resizeWindow(int	width,
 	resize(x(), y(), width, height);
 }
 
-void OriginalView::drawMarker(Point source){
-	// activate();
-	// float dX = 20;
-	// float dY = 20;
-	// glBegin( GL_LINES );
-	// 	glColor3f(1.0, 0.0, 0.0);
-	// 	glVertex2d( source.x -50 + dX, source.y + dY);
-	// 	glVertex2d( source.x -50 - dX, source.y - dY);
-	// 	glVertex2d( source.x - dX, source.y + dY);
-	// 	glVertex2d( source.x + dX, source.y - dY);
-	// glEnd();
-}
+void OriginalView::setMarker(bool bMarker, Point source){
+	this->bMarker = bMarker;
+	this->marker = source;}
+
+void OriginalView::drawMarker(){
+	float dX = 5;
+	float dY = 5;
+	glBegin( GL_LINES );
+		glColor3f(1.0, 0.0, 0.0);
+		glVertex2d( marker.x + dX, marker.y + dY);
+		glVertex2d( marker.x - dX, marker.y - dY);
+		glVertex2d( marker.x - dX, marker.y + dY);
+		glVertex2d( marker.x + dX, marker.y - dY);
+	glEnd();}
 
 
 

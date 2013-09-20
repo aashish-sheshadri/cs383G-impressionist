@@ -43,9 +43,6 @@ public:
 	void RestoreContent();
 
 	ImpressionistDoc *m_pDoc;
-
-	void setOrigView(OriginalView*);
-	OriginalView* getOrigView();
 private:
 	GLvoid* m_pPaintBitstart;
 	int		m_nDrawWidth,
