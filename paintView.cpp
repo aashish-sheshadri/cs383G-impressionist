@@ -137,8 +137,8 @@ void PaintView::draw()
 			m_pDoc->m_pUI->m_origView->setMarker(false);
 			m_pDoc->m_pUI->m_origView->refresh();
 			m_pDoc->m_pCurrentBrush->BrushEnd( source, target );
-			// SaveCurrentContent();
-			// RestoreContent();
+			SaveCurrentContent();
+			RestoreContent();
 			break;
 		case RIGHT_MOUSE_DOWN:
 			if(m_pDoc->m_pCurrentBrush->getAngleStatus()){
