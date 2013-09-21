@@ -314,6 +314,11 @@ void ImpressionistUI::cb_angleSlides(Fl_Widget* o, void* v)
 	((ImpressionistUI*)(o->user_data()))->m_nAngle=int( ((Fl_Slider *)o)->value() ) ;
 }
 
+void ImpressionistUI::cb_alphaSlides(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nAlpha=int( ((Fl_Slider *)o)->value() ) ;
+}
+
 //---------------------------------- per instance functions --------------------------------------
 
 //------------------------------------------------
@@ -371,6 +376,11 @@ void ImpressionistUI::setSize( int size )
 
 	if (size<=40) 
 		m_BrushSizeSlider->value(m_nSize);
+}
+
+int ImpressionistUI::getAlpha()
+{
+		return m_nAlpha;
 }
 
 //------------------------------------------------
@@ -467,6 +477,7 @@ ImpressionistUI::ImpressionistUI() {
 
 	m_nSize = 10;
 	m_nAngle = 45;
+	m_nAlpha = 255;
 
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
@@ -511,6 +522,19 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushSizeSlider->value(m_nAngle);
 		m_BrushSizeSlider->align(FL_ALIGN_RIGHT);
 		m_BrushSizeSlider->callback(cb_angleSlides);
+
+		// Add brush angle slider to the dialog 
+		m_BrushSizeSlider = new Fl_Value_Slider(10, 140, 300, 20, "Opacity");
+		m_BrushSizeSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_BrushSizeSlider->type(FL_HOR_NICE_SLIDER);
+        m_BrushSizeSlider->labelfont(FL_COURIER);
+        m_BrushSizeSlider->labelsize(12);
+		m_BrushSizeSlider->minimum(0);
+		m_BrushSizeSlider->maximum(255);
+		m_BrushSizeSlider->step(1);
+		m_BrushSizeSlider->value(m_nAlpha);
+		m_BrushSizeSlider->align(FL_ALIGN_RIGHT);
+		m_BrushSizeSlider->callback(cb_alphaSlides);
 
     m_brushDialog->end();	
 

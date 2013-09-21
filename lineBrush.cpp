@@ -12,7 +12,12 @@
 extern float frand();
 
 LineBrush::LineBrush( ImpressionistDoc* pDoc, const char* name ) :
-	ImpBrush(pDoc,name){}
+	ImpBrush(pDoc,name){
+		enableAngle();
+	}
+
+void LineBrush::enableAngle(){
+	angleEnabled = true;}
 
 void LineBrush::BrushBegin( const Point source, const Point target )
 {
@@ -21,8 +26,6 @@ void LineBrush::BrushBegin( const Point source, const Point target )
 	int angleChoice = pDoc->getAngleChoice();
 	if(angleChoice == 0){
 		prevPoint = target;
-	} else if (angleChoice == 1){
-
 	} else {
 		BrushMove( source, target );
 	}}
@@ -39,8 +42,9 @@ void LineBrush::BrushMove( const Point source, const Point target )
 
 	float rad;
 	int angleChoice = pDoc->getAngleChoice();
+	int size = pDoc->getSize();
+	int magnitude = size/2;
 	if(angleChoice == 0){
-		
 		float numer = target.y-prevPoint.y;
 		float den = target.x-prevPoint.x;
 		if(numer == 0){
@@ -51,16 +55,25 @@ void LineBrush::BrushMove( const Point source, const Point target )
 			rad = std::atan(numer/den);}
 		prevPoint = target;
 	} else if (angleChoice == 1){
-
+		if(bValidDragPoints){
+			float numer = finalDragPoint.y-initDragPoint.y;
+			float den = finalDragPoint.x-initDragPoint.x;
+			if(numer == 0){
+				rad = 0;
+			} else if(den == 0){
+				rad = (M_PI * 90)/(float)180;
+			} else {
+				rad = std::atan(numer/den);}
+			magnitude = (std::sqrt((numer*numer)+(den*den)))/2;
+		} else {
+			return;}
 	} else {
 		int angle = pDoc->getAngle();
 		rad = (M_PI * (float)angle)/(float)180;}
 
-	int size = pDoc->getSize();
 	glLineWidth ((float)size/4);
 	Point begin = target;
 	Point end = target;
-	int magnitude = size/2;
 	float dX = magnitude*std::cos(rad);
 	float dY = magnitude*std::sin(rad);
 

@@ -37,15 +37,25 @@ class ImpBrush
 {
 protected:
 	ImpBrush( ImpressionistDoc* pDoc = NULL, const char* name = NULL );
-
+	bool angleEnabled;
+	bool bValidDragPoints;
+	Point initDragPoint;
+	Point finalDragPoint;
 public:
 	// The implementation of your brush should realize these virtual functions
 	virtual void BrushBegin( const Point source, const Point target ) = 0;
 	virtual void BrushMove( const Point source, const Point target ) = 0;
 	virtual void BrushEnd( const Point source, const Point target ) = 0;
+	
+	virtual void enableAngle(){}
+	virtual ~ImpBrush(){};
+
+	bool getAngleStatus();
 
 	// according to the source image and the position, determine the draw color
 	void SetColor( const Point source );
+	void setDragAngle(float dragAngle);
+	void setDragMagnitude(float dragMagnitude);
 
 	// get Doc to communicate with it
 	ImpressionistDoc* GetDocument( void );
@@ -55,6 +65,9 @@ public:
 	
 	static int			c_nBrushCount;	// How many brushes we have,
 	static ImpBrush**	c_pBrushes;		// and what they are.
+
+	void setInitDragPoint(Point point);
+	void setFinalDragPoint(Point point);
 
 private:
 	ImpressionistDoc*	m_pDoc;

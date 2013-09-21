@@ -105,10 +105,12 @@ void PaintView::draw()
 	}
 	if ( m_pDoc->m_ucPainting && isAnEvent) 
 	{
-		static bool drawTrans = true;
-		if(drawTrans){
-			drawTransparent();
-			drawTrans = false;}
+		static bool drawFirst = true;
+		if(drawFirst){
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glEnable( GL_BLEND );
+			// drawTransparent();
+			drawFirst = false;}
 
 		// Clear it after processing.
 		isAnEvent	= 0;	
@@ -139,13 +141,15 @@ void PaintView::draw()
 			// RestoreContent();
 			break;
 		case RIGHT_MOUSE_DOWN:
-
+			if(m_pDoc->m_pCurrentBrush->getAngleStatus()){
+				m_pDoc->m_pCurrentBrush->setInitDragPoint(target );}
 			break;
 		case RIGHT_MOUSE_DRAG:
 
 			break;
 		case RIGHT_MOUSE_UP:
-
+			if(m_pDoc->m_pCurrentBrush->getAngleStatus()){
+				m_pDoc->m_pCurrentBrush->setFinalDragPoint(target );}
 			break;
 
 		default:
@@ -286,10 +290,10 @@ void PaintView::drawTransparent(){
 
 
 		bitstart = alphaImage + 4 * ((m_pDoc->m_nWidth * startrow) + scrollpos.x);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		// glBlendFunc(GL_ZERO, GL_SRC1_ALPHA);
-		// glBlendFunc(GL_SRC1_COLOR, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable( GL_BLEND );
+		// glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		// // glBlendFunc(GL_ZERO, GL_SRC1_ALPHA);
+		// // glBlendFunc(GL_SRC1_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+		// glEnable( GL_BLEND );
 		// just copy image to GLwindow conceptually
 		glRasterPos2i( 0, m_nWindowHeight - drawHeight );
 		glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );

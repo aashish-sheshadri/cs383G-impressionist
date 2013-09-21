@@ -17,6 +17,8 @@ ImpBrush::ImpBrush(ImpressionistDoc*	pDoc,
 					m_pDoc(pDoc), 
 					m_pBrushName(name)
 {
+	angleEnabled = false;
+	bValidDragPoints = false;
 }
 
 //---------------------------------------------------
@@ -48,5 +50,15 @@ void ImpBrush::SetColor (const Point source)
 	GLubyte color[4];
 	// glBlendFunc(GL_ZERO, GL_SRC1_ALPHA);
 	memcpy ( color, pDoc->GetOriginalPixel( source ), 3 );
- 	color[3] = 50;
+ 	color[3] = pDoc->getAlpha();
 	glColor4ubv( color );}
+
+bool ImpBrush::getAngleStatus(){
+	return angleEnabled;}
+
+void ImpBrush::setInitDragPoint(Point point){
+	this->initDragPoint = point;}
+
+void ImpBrush::setFinalDragPoint(Point point){
+	this->finalDragPoint = point;
+	bValidDragPoints = true;}

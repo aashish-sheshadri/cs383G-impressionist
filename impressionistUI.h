@@ -74,6 +74,8 @@ public:
 	int					getAngle();
 	void				setAngle(int angle);
 
+	int 				getAlpha();
+
 	// Callbacks for the image filter dialogue (different from
 	// the other callbacks because they aren't static)
 	void				initFltDesignUI(void);
@@ -91,6 +93,7 @@ private:
 	// All attributes here
 	int		m_nSize;
 	int 	m_nAngle;
+	int 	m_nAlpha;
 
 	// These attributes are set by the filter kernel UI
 	double fltKernel[FLT_WIDTH*FLT_HEIGHT];		//the kernel of the image filter
@@ -122,6 +125,7 @@ private:
 	static void	cb_angleSlides(Fl_Widget* o, void* v);
 	static void	cb_angleChoice(Fl_Widget* o, void* v);
 	static void cb_filter(Fl_Menu_* o, void* v);
+	static void	cb_alphaSlides(Fl_Widget* o, void* v);
 	
 	//filter callbacks
 	static void	cb_apply_filter_button(Fl_Widget* o, void* v);

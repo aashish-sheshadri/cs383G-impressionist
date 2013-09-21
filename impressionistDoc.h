@@ -83,6 +83,8 @@ public:
 
 	void	setScale(float val);
 	void	setOffset(float val);
+
+	int getAlpha();
 	
 
 // Attributes

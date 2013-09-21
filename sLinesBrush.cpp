@@ -14,7 +14,11 @@ extern float ufRandMap(float);
 SLinesBrush::SLinesBrush( ImpressionistDoc* pDoc, const char* name ) :
 	ImpBrush(pDoc,name)
 {
-}
+		enableAngle();}
+
+void SLinesBrush::enableAngle(){
+	angleEnabled = true;}
+
 
 void SLinesBrush::BrushBegin( const Point source, const Point target )
 {
@@ -39,6 +43,8 @@ void SLinesBrush::BrushMove( const Point source, const Point target )
 		return;
 	}
 	
+	int size = pDoc->getSize();
+	int magnitude = size/2;
 	float rad;
 	int angleChoice = pDoc->getAngleChoice();
 	if(angleChoice == 0){
@@ -53,15 +59,26 @@ void SLinesBrush::BrushMove( const Point source, const Point target )
 			rad = std::atan(numer/den);}
 		prevPoint = target;
 	} else if (angleChoice == 1){
-
+		if(bValidDragPoints){
+			float numer = finalDragPoint.y-initDragPoint.y;
+			float den = finalDragPoint.x-initDragPoint.x;
+			if(numer == 0){
+				rad = 0;
+			} else if(den == 0){
+				rad = (M_PI * 90)/(float)180;
+			} else {
+				rad = std::atan(numer/den);}
+			magnitude = (std::sqrt((numer*numer)+(den*den)))/2;
+		} else {
+			return;}
 	} else {
 		int angle = pDoc->getAngle();
 		rad = (M_PI * (float)angle)/(float)180;}
 
-	int size = pDoc->getSize();
+	
 	Point begin = target;
 	Point end = target;
-	int magnitude = size/2;
+	
 	float dX = magnitude*std::cos(rad);
 	float dY = magnitude*std::sin(rad);
 
