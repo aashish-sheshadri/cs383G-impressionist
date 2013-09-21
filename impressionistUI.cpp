@@ -516,6 +516,8 @@ ImpressionistUI::ImpressionistUI() {
 
     // filter dialog definition 
     std::fill(fltKernel,fltKernel+(FLT_WIDTH*FLT_HEIGHT)-1,0.0f);
+    // m_nScale = 1.0f;
+    // m_nOffset = 0.0f;
     m_filterDialog = new Fl_Window(400, 200, "Filter Dialog");
 
     	m_ApplyFilterButton = new Fl_Button(30,170,100,25,"&Apply Filter");
@@ -534,7 +536,7 @@ ImpressionistUI::ImpressionistUI() {
 		scaleInput->user_data((void*)(this)); 
 		scaleInput->callback(cb_scaleInput);
 		
-		Fl_Float_Input* offsetInput = new Fl_Float_Input(50, 100, 40, 20,"Offset");
+		Fl_Float_Input* offsetInput = new Fl_Float_Input(50, 120, 40, 20,"&Offset");
 		offsetInput->user_data((void*)(this)); 
 		offsetInput->callback(cb_offsetInput);
 
@@ -644,8 +646,7 @@ ImpressionistUI::ImpressionistUI() {
 
 }
 void ImpressionistUI::cb_apply_filter_button(Fl_Widget* o, void* v){
-
-}
+	((ImpressionistUI*)(o->user_data()))->m_pDoc->processFilterCall();}
 
 void ImpressionistUI::cb_preview_filter_button(Fl_Widget* o, void* v){
 
@@ -657,11 +658,11 @@ void ImpressionistUI::cb_cancel_filter_button(Fl_Widget* o, void* v){
 
 void ImpressionistUI::cb_scaleInput(Fl_Widget* o, void* v)
 {
-	((ImpressionistUI*)(o->user_data()))->scale = atof(((Fl_Float_Input *)o)->value());}
+	((ImpressionistUI*)(o->user_data()))->m_pDoc->setScale(atof(((Fl_Float_Input *)o)->value()));}
 
 void ImpressionistUI::cb_offsetInput(Fl_Widget* o, void* v)
 {
-	((ImpressionistUI*)(o->user_data()))->offset = atof(((Fl_Float_Input *)o)->value());}
+	((ImpressionistUI*)(o->user_data()))->m_pDoc->setOffset(atof(((Fl_Float_Input *)o)->value()));}
 
 void ImpressionistUI::cb_filterInput_00(Fl_Widget* o, void* v)
 {
@@ -762,6 +763,9 @@ void ImpressionistUI::cb_filterInput_43(Fl_Widget* o, void* v)
 void ImpressionistUI::cb_filterInput_44(Fl_Widget* o, void* v)
 {
 	(((ImpressionistUI*)(o->user_data()))->fltKernel)[24] = atof(((Fl_Float_Input *)o)->value());}
+
+double* ImpressionistUI::getFilterKernel(){
+	return fltKernel;}
 
 ImpressionistUI::~ImpressionistUI()
 {

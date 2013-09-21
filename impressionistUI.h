@@ -83,6 +83,7 @@ public:
 	void				applyFilter(void);
 	void				previewFilter(void);
 
+	double*				getFilterKernel();
 
 private:
 	ImpressionistDoc*	m_pDoc;		// pointer to document to communicate with the document
@@ -93,7 +94,8 @@ private:
 
 	// These attributes are set by the filter kernel UI
 	double fltKernel[FLT_WIDTH*FLT_HEIGHT];		//the kernel of the image filter
-	double scale,offset;						//the divisor and offset parameter, 
+	double m_nScale;
+	double m_nOffset;						//the divisor and offset parameter, 
 												//applied after convolving to transform 
 												//the filtered image into the range [0,255]
 

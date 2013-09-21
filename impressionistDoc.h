@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <functional>
 #include <numeric>
+#include <cstdlib>
 
 
 template <typename RI1,typename RI2>
@@ -40,9 +41,9 @@ void loadNeighbours(int currY, int currX, int knlWidth, int knlHeight, RI1 sourc
 				++greenIt;
 				++blueIt;
 				continue;}
-			*redIt = sourceBuffer[3*(y*srcBufferWidth+x)+0];
-			*blueIt = sourceBuffer[3*(y*srcBufferWidth+x)+1];
-			*greenIt = sourceBuffer[3*(y*srcBufferWidth+x)+2];
+			*redIt = sourceBuffer[3*(neighbourY*srcBufferWidth+neighbourX) + 0];
+			*greenIt = sourceBuffer[3*(neighbourY*srcBufferWidth+neighbourX) + 1];
+			*blueIt = sourceBuffer[3*(neighbourY*srcBufferWidth+neighbourX) + 2];
 			++redIt;
 			++greenIt;
 			++blueIt;}}}
@@ -77,6 +78,11 @@ public:
 	int		getAngle();						// get the UI angle
 	void	setAngle(int angle);			// set the UI angle
 	char*	getImageName();					// get the current image name
+
+	void 	processFilterCall();
+
+	void	setScale(float val);
+	void	setOffset(float val);
 	
 
 // Attributes
@@ -91,6 +97,7 @@ public:
 	unsigned char*	m_ucBitmap;
 	unsigned char*	m_ucPainting;
 
+	unsigned char*	m_ucFilterResult;
 	// Used by the filtering code so that we can
 	// preview filters before applying.
 	unsigned char*	m_ucPreviewBackup;
@@ -102,7 +109,10 @@ public:
 	// Size of the brush.
 	int m_nSize;
 	int m_nAngle;
-	int m_pAngleChoice;							
+	int m_pAngleChoice;
+
+	float m_nScale;							
+	float m_nOffset;							
 
 	ImpressionistUI*	m_pUI;
 

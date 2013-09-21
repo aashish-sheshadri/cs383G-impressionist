@@ -34,7 +34,8 @@ ImpressionistDoc::ImpressionistDoc()
 	m_ucBitmap		= NULL;
 	m_ucPainting	= NULL;
 	m_ucPreviewBackup = NULL;
-
+	m_nScale = 1;
+	m_nOffset = 0;
 
 	// create one instance of each brush
 	ImpBrush::c_nBrushCount	= NUM_BRUSH_TYPE;
@@ -243,23 +244,22 @@ void ImpressionistDoc::applyFilter( const unsigned char* sourceBuffer,
 {
 	for(int i=0;i<srcBufferHeight;++i){
 		for(int j=0;j<srcBufferWidth;++j){
-			std::vector<unsigned char> neighboursRed(knlWidth*knlHeight,0); 
-			std::vector<unsigned char> neighboursGreen(knlWidth*knlHeight,0); 
-			std::vector<unsigned char> neighboursBlue(knlWidth*knlHeight,0); 
+			std::vector<unsigned int> neighboursRed(knlWidth*knlHeight,0); 
+			std::vector<unsigned int> neighboursGreen(knlWidth*knlHeight,0); 
+			std::vector<unsigned int> neighboursBlue(knlWidth*knlHeight,0); 
 			
 			loadNeighbours(i,j,knlWidth,knlHeight,sourceBuffer,srcBufferWidth,srcBufferHeight,neighboursRed.begin(),
 				neighboursGreen.begin(),neighboursBlue.begin());
 
-			std::transform(neighboursRed.begin(),neighboursRed.end(),filterKernel,neighboursRed.begin(),std::plus<unsigned char>());
-			std::transform(neighboursGreen.begin(),neighboursGreen.end(),filterKernel,neighboursGreen.begin(),std::plus<unsigned char>());
-			std::transform(neighboursBlue.begin(),neighboursBlue.end(),filterKernel,neighboursBlue.begin(),std::plus<unsigned char>());
+			std::transform(neighboursRed.begin(),neighboursRed.end(),filterKernel,neighboursRed.begin(),std::multiplies<float>());
+			std::transform(neighboursGreen.begin(),neighboursGreen.end(),filterKernel,neighboursGreen.begin(),std::multiplies<float>());
+			std::transform(neighboursBlue.begin(),neighboursBlue.end(),filterKernel,neighboursBlue.begin(),std::multiplies<float>());
 			
-			destBuffer[3*(i*srcBufferHeight+j)+0] = ((double)std::accumulate(neighboursRed.begin(),neighboursRed.end(),0)/divisor) + offset;
-			destBuffer[3*(i*srcBufferHeight+j)+1] = ((double)std::accumulate(neighboursGreen.begin(),neighboursGreen.end(),0)/divisor) + offset;
-			destBuffer[3*(i*srcBufferHeight+j)+2] = ((double)std::accumulate(neighboursBlue.begin(),neighboursBlue.end(),0)/divisor) + offset;}}
+			
+			destBuffer[3*(i*srcBufferWidth+j)+0] = (unsigned char)(((double)std::accumulate(neighboursRed.begin(),neighboursRed.end(),0)/divisor) + offset);
+			destBuffer[3*(i*srcBufferWidth+j)+1] = (unsigned char)(((double)std::accumulate(neighboursGreen.begin(),neighboursGreen.end(),0)/divisor) + offset);
+			destBuffer[3*(i*srcBufferWidth+j)+2] = (unsigned char)(((double)std::accumulate(neighboursBlue.begin(),neighboursBlue.end(),0)/divisor) + offset);}}
 	// This needs to be implemented for image filtering to work.
-
-
 }
 
 
@@ -288,6 +288,17 @@ GLubyte* ImpressionistDoc::GetOriginalPixel( const Point p )
 {
 	return GetOriginalPixel( p.x, p.y );
 }
+
+void ImpressionistDoc::processFilterCall(){
+	m_ucFilterResult = new unsigned char[m_nWidth*m_nHeight*3];
+	this->applyFilter(m_ucBitmap,m_nWidth,m_nHeight,m_ucFilterResult,m_pUI->getFilterKernel(),FLT_WIDTH,FLT_HEIGHT,m_nScale,m_nOffset);
+	this->m_pUI->m_paintView->setDrawFilterResult();
+	delete[] m_ucFilterResult;} 
+
+void ImpressionistDoc::setScale(float val){
+	this->m_nScale = val;}
+void ImpressionistDoc::setOffset(float val){
+	this->m_nOffset = val;}
 
 
 

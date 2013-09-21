@@ -27,8 +27,8 @@ class ImpressionistDoc;
 
 class PaintView : public Fl_Gl_Window
 {
-	OriginalView *m_origView;
 	void drawTransparent();
+	void drawFilterResult();
 public:
 	PaintView(int x, int y, int w, int h, const char* l);
 	~PaintView();
@@ -43,10 +43,14 @@ public:
 
 	void RestoreContent();
 
+	void setDrawFilterResult();
+
 	ImpressionistDoc *m_pDoc;
 private:
 	unsigned char* alphaImage;
+	unsigned char* filterResult;
 	GLvoid* m_pPaintBitstart;
+	bool bDrawFilterResult;
 	int		m_nDrawWidth,
 			m_nDrawHeight,
 			m_nStartRow, 

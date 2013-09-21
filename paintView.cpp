@@ -36,11 +36,14 @@ PaintView::PaintView(int			x,
 						: Fl_Gl_Window(x,y,w,h,l)
 {
 	m_nWindowWidth	= w;
-	m_nWindowHeight	= h;}
+	m_nWindowHeight	= h;
+	this->bDrawFilterResult = false;}
 
 PaintView::~PaintView(){
 	if(alphaImage!=NULL)
-		delete []alphaImage;}
+		delete []alphaImage;
+	if(filterResult!=NULL)
+		delete []filterResult;}
 
 void PaintView::draw()
 {
@@ -61,6 +64,14 @@ void PaintView::draw()
 
 		glClear( GL_COLOR_BUFFER_BIT );
 	}
+
+	if(m_pDoc->m_ucPainting && this->bDrawFilterResult){
+		m_pPaintBitstart = m_pDoc->m_ucPainting;
+		this->drawFilterResult();
+		m_pPaintBitstart = m_pDoc->m_ucPainting;
+		SaveCurrentContent();
+		this->bDrawFilterResult = false;
+		return;}
 
 	Point scrollpos;// = GetScrollPosition();
 	scrollpos.x = 0;
@@ -92,7 +103,6 @@ void PaintView::draw()
 		RestoreContent();
 
 	}
-
 	if ( m_pDoc->m_ucPainting && isAnEvent) 
 	{
 		static bool drawTrans = true;
@@ -125,8 +135,8 @@ void PaintView::draw()
 			m_pDoc->m_pUI->m_origView->setMarker(false);
 			m_pDoc->m_pUI->m_origView->refresh();
 			m_pDoc->m_pCurrentBrush->BrushEnd( source, target );
-			SaveCurrentContent();
-			RestoreContent();
+			// SaveCurrentContent();
+			// RestoreContent();
 			break;
 		case RIGHT_MOUSE_DOWN:
 
@@ -288,4 +298,34 @@ void PaintView::drawTransparent(){
 		glDrawPixels( drawWidth, drawHeight, GL_RGBA, GL_UNSIGNED_BYTE, bitstart );
 		// glDisable(GL_BLEND);
 	}}
+
+void PaintView::drawFilterResult(){
+	if ( m_pDoc->m_ucFilterResult ){
+		int drawWidth, drawHeight;
+		GLvoid* bitstart;
+
+		// we are not using a scrollable window, so ignore it
+		Point scrollpos;	// = GetScrollPosition();
+		scrollpos.x=scrollpos.y=0;
+
+		drawWidth	= min( m_nWindowWidth, m_pDoc->m_nWidth );
+		drawHeight	= min( m_nWindowHeight, m_pDoc->m_nHeight );
+
+		int	startrow	= m_pDoc->m_nHeight - (scrollpos.y + drawHeight);
+		if ( startrow < 0 ) 
+			startrow = 0;
+
+		bitstart = m_pDoc->m_ucFilterResult + 3 * ((m_pDoc->m_nWidth * startrow) + scrollpos.x);
+		// just copy image to GLwindow conceptually
+		glRasterPos2i( 0, m_nWindowHeight - drawHeight );
+		glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
+		glPixelStorei( GL_UNPACK_ROW_LENGTH, m_pDoc->m_nWidth );
+		glDrawBuffer( GL_BACK );
+		glDrawPixels( drawWidth, drawHeight, GL_RGB, GL_UNSIGNED_BYTE, bitstart );
+	}
+}
+
+void PaintView::setDrawFilterResult(){
+	this->bDrawFilterResult = true;
+	this->refresh();}
 
