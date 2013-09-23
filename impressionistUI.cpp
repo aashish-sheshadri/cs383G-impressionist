@@ -442,6 +442,12 @@ Fl_Menu_Item ImpressionistUI::angleChoiceMenu[3+1] = {
   {0}
 };
 
+// Filter choice menu definition
+Fl_Menu_Item ImpressionistUI::filterChoiceMenu[2+1] = {
+  {"Original",FL_ALT+'o', (Fl_Callback *)ImpressionistUI::cb_filterChoice, (void *)0},
+  {"Paint",FL_ALT+'p', (Fl_Callback *)ImpressionistUI::cb_filterChoice, (void *)1},
+  {0}
+};
 
 
 //----------------------------------------------------
@@ -543,6 +549,11 @@ ImpressionistUI::ImpressionistUI() {
     // m_nScale = 1.0f;
     // m_nOffset = 0.0f;
     m_filterDialog = new Fl_Window(400, 200, "Filter Dialog");
+
+    	m_BrushTypeChoice = new Fl_Choice(150,10,150,25,"&Select Source");
+		m_BrushTypeChoice->user_data((void*)(this));	// record self to be used by static callback functions
+		m_BrushTypeChoice->menu(filterChoiceMenu);
+		m_BrushTypeChoice->callback(cb_filterChoice);
 
     	m_ApplyFilterButton = new Fl_Button(30,170,100,25,"&Apply Filter");
 		m_ApplyFilterButton->user_data((void*)(this));
@@ -669,16 +680,27 @@ ImpressionistUI::ImpressionistUI() {
 
 
 }
+
+void ImpressionistUI::cb_filterChoice(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI=((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc=pUI->getDocument();
+
+	//	int type=(int)v;
+	long long tmp = reinterpret_cast<long long>(v);
+	int type = static_cast<int>(tmp);
+
+	pDoc->setFilterChoice(type);
+}
+
 void ImpressionistUI::cb_apply_filter_button(Fl_Widget* o, void* v){
-	((ImpressionistUI*)(o->user_data()))->m_pDoc->processFilterCall();}
+	((ImpressionistUI*)(o->user_data()))->m_pDoc->processFilterCall(1);}
 
 void ImpressionistUI::cb_preview_filter_button(Fl_Widget* o, void* v){
-
-}
+	((ImpressionistUI*)(o->user_data()))->m_pDoc->processFilterCall(0);}
 
 void ImpressionistUI::cb_cancel_filter_button(Fl_Widget* o, void* v){
-
-}
+	((ImpressionistUI*)(o->user_data()))->m_pDoc->processFilterCall(-1);}
 
 void ImpressionistUI::cb_scaleInput(Fl_Widget* o, void* v)
 {

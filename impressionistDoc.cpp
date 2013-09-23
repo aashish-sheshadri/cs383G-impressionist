@@ -36,6 +36,7 @@ ImpressionistDoc::ImpressionistDoc()
 	m_ucPreviewBackup = NULL;
 	m_nScale = 1;
 	m_nOffset = 0;
+	m_nFilterChoice = 0;
 
 	// create one instance of each brush
 	ImpBrush::c_nBrushCount	= NUM_BRUSH_TYPE;
@@ -291,16 +292,29 @@ GLubyte* ImpressionistDoc::GetOriginalPixel( const Point p )
 	return GetOriginalPixel( p.x, p.y );
 }
 
-void ImpressionistDoc::processFilterCall(){
+void ImpressionistDoc::processFilterCall(int type){
 	m_ucFilterResult = new unsigned char[m_nWidth*m_nHeight*3];
-	this->applyFilter(m_ucBitmap,m_nWidth,m_nHeight,m_ucFilterResult,m_pUI->getFilterKernel(),FLT_WIDTH,FLT_HEIGHT,m_nScale,m_nOffset);
-	this->m_pUI->m_paintView->setDrawFilterResult();
+	switch(this->m_nFilterChoice){
+		case 0:
+			this->applyFilter(m_ucBitmap,m_nWidth,m_nHeight,m_ucFilterResult,m_pUI->getFilterKernel(),FLT_WIDTH,FLT_HEIGHT,m_nScale,m_nOffset);
+			break;
+		case 1:
+			this->applyFilter(this->m_pUI->m_paintView->getPaintView(),m_nWidth,m_nHeight,m_ucFilterResult,m_pUI->getFilterKernel(),FLT_WIDTH,FLT_HEIGHT,m_nScale,m_nOffset);
+			break;
+		default:
+			this->applyFilter(m_ucBitmap,m_nWidth,m_nHeight,m_ucFilterResult,m_pUI->getFilterKernel(),FLT_WIDTH,FLT_HEIGHT,m_nScale,m_nOffset);}
+
+	this->m_pUI->m_paintView->setDrawFilterResult(type);
 	delete[] m_ucFilterResult;} 
 
 void ImpressionistDoc::setScale(float val){
 	this->m_nScale = val;}
 void ImpressionistDoc::setOffset(float val){
 	this->m_nOffset = val;}
+
+void ImpressionistDoc::setFilterChoice(int type){
+	this->m_nFilterChoice = type;
+}
 
 
 

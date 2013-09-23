@@ -79,10 +79,12 @@ public:
 	void	setAngle(int angle);			// set the UI angle
 	char*	getImageName();					// get the current image name
 
-	void 	processFilterCall();
+	void 	processFilterCall(int);
 
 	void	setScale(float val);
 	void	setOffset(float val);
+
+	void	setFilterChoice(int type);
 
 	int getAlpha();
 	
@@ -129,6 +131,7 @@ public:
 
 private:
 	char			m_imageName[256];
+	int m_nFilterChoice;
 
 };
 

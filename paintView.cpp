@@ -69,7 +69,10 @@ void PaintView::draw()
 		m_pPaintBitstart = m_pDoc->m_ucPainting;
 		this->drawFilterResult();
 		m_pPaintBitstart = m_pDoc->m_ucPainting;
-		SaveCurrentContent();
+		if(filterPreview == 1)
+			SaveCurrentContent();
+		else if(filterPreview == -1)
+			RestoreContent();
 		this->bDrawFilterResult = false;
 		return;}
 
@@ -329,7 +332,11 @@ void PaintView::drawFilterResult(){
 	}
 }
 
-void PaintView::setDrawFilterResult(){
+void PaintView::setDrawFilterResult(int type){
+	this->filterPreview = type;
 	this->bDrawFilterResult = true;
 	this->refresh();}
 
+unsigned char* PaintView::getPaintView(){
+	return reinterpret_cast<unsigned char*>(m_pPaintBitstart);
+}

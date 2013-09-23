@@ -43,8 +43,8 @@ public:
 
 	void RestoreContent();
 
-	void setDrawFilterResult();
-
+	void setDrawFilterResult(int);
+	unsigned char* getPaintView();
 	ImpressionistDoc *m_pDoc;
 private:
 	unsigned char* alphaImage;
@@ -59,6 +59,7 @@ private:
 			m_nEndCol,
 			m_nWindowWidth, 
 			m_nWindowHeight;
+	int 	filterPreview;
 
 };
 
