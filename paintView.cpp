@@ -175,7 +175,7 @@ int PaintView::handle(int event)
 	switch(event)
 	{
 	case FL_ENTER:
-	    redraw();
+	    // redraw();
 		break;
 	case FL_PUSH:
 		coord.x = Fl::event_x();
