@@ -37,13 +37,11 @@ PaintView::PaintView(int			x,
 {
 	m_nWindowWidth	= w;
 	m_nWindowHeight	= h;
-	this->bDrawFilterResult = false;}
+	this->bDrawFilterResult = false;
+	this->bDrawTransparentBackground = false;
+	this->backgroundTransparency = 150;}
 
-PaintView::~PaintView(){
-	if(alphaImage!=NULL)
-		delete []alphaImage;
-	if(filterResult!=NULL)
-		delete []filterResult;}
+PaintView::~PaintView(){}
 
 void PaintView::draw()
 {
@@ -64,6 +62,27 @@ void PaintView::draw()
 
 		glClear( GL_COLOR_BUFFER_BIT );
 	}
+	static bool drawFirst = true;
+	if(m_pDoc->m_ucPainting && drawFirst){
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable( GL_BLEND );
+		drawFirst = false;}
+
+	if(m_pDoc->m_ucPainting && this->bDrawTransparentBackground){
+		static bool bDraw = true;
+		if(bDraw){
+			drawTransparent();
+			bDraw = false;
+		}else{
+			this->bDrawTransparentBackground = false;
+			bDraw = true;
+			RestoreContent();}
+		glFlush();
+		#ifndef MESA
+		// To avoid flicker on some machines.
+		glDrawBuffer(GL_BACK);
+		#endif // !MESA
+		return;}
 
 	if(m_pDoc->m_ucPainting && this->bDrawFilterResult){
 		m_pPaintBitstart = m_pDoc->m_ucPainting;
@@ -108,13 +127,6 @@ void PaintView::draw()
 	}
 	if ( m_pDoc->m_ucPainting && isAnEvent) 
 	{
-		static bool drawFirst = true;
-		if(drawFirst){
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glEnable( GL_BLEND );
-			// drawTransparent();
-			drawFirst = false;}
-
 		// Clear it after processing.
 		isAnEvent	= 0;	
 
@@ -270,13 +282,9 @@ void PaintView::RestoreContent()
 }
 
 void PaintView::drawTransparent(){
-	static int numCalls = 0;
-	++numCalls;
-	if(numCalls>1)
-		return;
 	unsigned char* alphaImage = new unsigned char[m_pDoc->m_nWidth * m_pDoc->m_nHeight *4 ];
 	if ( m_pDoc->m_ucBitmap ){
-		copyImage(m_pDoc->m_ucBitmap,alphaImage, m_pDoc->m_nWidth * m_pDoc->m_nHeight);
+		copyImage(m_pDoc->m_ucBitmap,alphaImage, m_pDoc->m_nWidth * m_pDoc->m_nHeight, this->backgroundTransparency);
 		int drawWidth, drawHeight;
 		GLvoid* bitstart;
 
@@ -304,7 +312,8 @@ void PaintView::drawTransparent(){
 		glDrawBuffer( GL_BACK );
 		glDrawPixels( drawWidth, drawHeight, GL_RGBA, GL_UNSIGNED_BYTE, bitstart );
 		// glDisable(GL_BLEND);
-	}}
+	}
+	delete []alphaImage;}
 
 void PaintView::drawFilterResult(){
 	if ( m_pDoc->m_ucFilterResult ){
@@ -335,6 +344,11 @@ void PaintView::drawFilterResult(){
 void PaintView::setDrawFilterResult(int type){
 	this->filterPreview = type;
 	this->bDrawFilterResult = true;
+	this->refresh();}
+
+void PaintView::setDrawTransparentBackground(unsigned char transparency){
+	this->backgroundTransparency = transparency;
+	this->bDrawTransparentBackground = true;
 	this->refresh();}
 
 unsigned char* PaintView::getPaintView(){

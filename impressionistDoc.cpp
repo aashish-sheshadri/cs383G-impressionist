@@ -22,6 +22,7 @@
 #include "sPointsBrush.h"
 #include "sCirclesBrush.h"
 #include "sLinesBrush.h"
+#include "blobBrush.h"
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
 
@@ -55,6 +56,8 @@ ImpressionistDoc::ImpressionistDoc()
 		= new SLinesBrush( this, "Scattered Lines" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CIRCLES]	
 		= new SCirclesBrush( this, "Scattered Circles" );
+	ImpBrush::c_pBrushes[BRUSH_BLOB]	
+		= new BlobBrush( this, "Blob" );
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];

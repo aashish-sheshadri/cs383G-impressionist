@@ -15,8 +15,7 @@
 #include "originalView.h"
 
 template <typename II,typename OI>
-void copyImage(II orig, OI dup, unsigned int size){
-	const unsigned char alpha = 50;
+void copyImage(II orig, OI dup, unsigned int size, const unsigned char alpha){
 	for(unsigned int i = 0;i<size;++i){
 		*(dup+4*i+0) = *(orig+3*i+0);
 		*(dup+4*i+1) = *(orig+3*i+1);
@@ -44,13 +43,13 @@ public:
 	void RestoreContent();
 
 	void setDrawFilterResult(int);
+	void setDrawTransparentBackground(unsigned char);
 	unsigned char* getPaintView();
 	ImpressionistDoc *m_pDoc;
 private:
-	unsigned char* alphaImage;
-	unsigned char* filterResult;
 	GLvoid* m_pPaintBitstart;
 	bool bDrawFilterResult;
+	bool bDrawTransparentBackground;
 	int		m_nDrawWidth,
 			m_nDrawHeight,
 			m_nStartRow, 
@@ -60,6 +59,8 @@ private:
 			m_nWindowWidth, 
 			m_nWindowHeight;
 	int 	filterPreview;
+	unsigned char backgroundTransparency;
+
 
 };
 

@@ -431,6 +431,7 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE+1] = {
   {"Scattered Points",	FL_ALT+'q', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_POINTS},
   {"Scattered Lines",	FL_ALT+'m', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_LINES},
   {"Scattered Circles",	FL_ALT+'d', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_CIRCLES},
+  {"Blob",	FL_ALT+'b', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_BLOB},
   {0}
 };
 
@@ -496,6 +497,10 @@ ImpressionistUI::ImpressionistUI() {
 		m_ClearCanvasButton = new Fl_Button(240,10,150,25,"&Clear Canvas");
 		m_ClearCanvasButton->user_data((void*)(this));
 		m_ClearCanvasButton->callback(cb_clear_canvas_button);
+
+		m_transparentBackgroundButton = new Fl_Button(130,280,150,25,"&Show Background");
+		m_transparentBackgroundButton->user_data((void*)(this));
+		m_transparentBackgroundButton->callback(cb_transparentBackground);
 
 		//Add angle choice menu
 		Fl_Choice * myChoice = new Fl_Choice(95,60,150,25,"&Angle Choice");
@@ -571,7 +576,7 @@ ImpressionistUI::ImpressionistUI() {
 		scaleInput->user_data((void*)(this)); 
 		scaleInput->callback(cb_scaleInput);
 		
-		Fl_Float_Input* offsetInput = new Fl_Float_Input(50, 120, 40, 20,"&Offset");
+		Fl_Float_Input* offsetInput = new Fl_Float_Input(50, 100, 40, 20,"&Offset");
 		offsetInput->user_data((void*)(this)); 
 		offsetInput->callback(cb_offsetInput);
 
@@ -680,6 +685,9 @@ ImpressionistUI::ImpressionistUI() {
 
 
 }
+
+void ImpressionistUI::cb_transparentBackground(Fl_Widget* o, void* v){
+	((ImpressionistUI *)(o->user_data()))->m_paintView->setDrawTransparentBackground(150);}
 
 void ImpressionistUI::cb_filterChoice(Fl_Widget* o, void* v)
 {

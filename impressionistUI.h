@@ -53,6 +53,8 @@ public:
 
 	Fl_Slider*			m_BrushAngleSlider;
 
+	Fl_Button* 			m_transparentBackgroundButton;
+
 // for filter dialog
 	Fl_Window*			m_filterDialog;
 	Fl_Button* 			m_ApplyFilterButton;
@@ -130,6 +132,7 @@ private:
 	static void cb_filter(Fl_Menu_* o, void* v);
 	static void	cb_alphaSlides(Fl_Widget* o, void* v);
 	static void	cb_filterChoice(Fl_Widget* o, void* v);
+	static void	cb_transparentBackground(Fl_Widget* o, void* v);
 	
 	//filter callbacks
 	static void	cb_apply_filter_button(Fl_Widget* o, void* v);
