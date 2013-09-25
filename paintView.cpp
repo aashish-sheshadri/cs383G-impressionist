@@ -347,6 +347,8 @@ void PaintView::setDrawFilterResult(int type){
 	this->refresh();}
 
 void PaintView::setDrawTransparentBackground(unsigned char transparency){
+	if(this->bDrawTransparentBackground)
+		return;
 	this->backgroundTransparency = transparency;
 	this->bDrawTransparentBackground = true;
 	this->refresh();}

@@ -97,6 +97,7 @@ private:
 	int		m_nSize;
 	int 	m_nAngle;
 	int 	m_nAlpha;
+	int 	m_nBackgroundAlpha;
 
 	// These attributes are set by the filter kernel UI
 	double fltKernel[FLT_WIDTH*FLT_HEIGHT];		//the kernel of the image filter
@@ -133,6 +134,7 @@ private:
 	static void	cb_alphaSlides(Fl_Widget* o, void* v);
 	static void	cb_filterChoice(Fl_Widget* o, void* v);
 	static void	cb_transparentBackground(Fl_Widget* o, void* v);
+	static void	cb_backgroundAlphaSlides(Fl_Widget* o, void* v);
 	
 	//filter callbacks
 	static void	cb_apply_filter_button(Fl_Widget* o, void* v);
