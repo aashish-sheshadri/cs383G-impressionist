@@ -100,6 +100,9 @@ public:
 	// Bitmaps for original image and painting.
 	unsigned char*	m_ucBitmap;
 	unsigned char*	m_ucPainting;
+	unsigned char*  m_ucEdgeImage;
+	unsigned char*  m_ucEdgeX;
+	unsigned char*  m_ucEdgeY;
 
 	unsigned char*	m_ucFilterResult;
 	// Used by the filtering code so that we can
@@ -127,11 +130,14 @@ public:
 	// Get the color of the original picture at the specified point	
 	GLubyte* GetOriginalPixel( const Point p );
 
+	float GetGradientAtPixel( int x, int y );
 
 
 private:
 	char			m_imageName[256];
 	int m_nFilterChoice;
+	void updateEdgeImage();
+	float getRadian(float numer, float denom);
 
 };
 

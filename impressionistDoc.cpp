@@ -38,6 +38,7 @@ ImpressionistDoc::ImpressionistDoc()
 	m_nScale = 1;
 	m_nOffset = 0;
 	m_nFilterChoice = 0;
+	m_ucEdgeImage = NULL;
 
 	// create one instance of each brush
 	ImpBrush::c_nBrushCount	= NUM_BRUSH_TYPE;
@@ -149,11 +150,19 @@ int ImpressionistDoc::loadImage(char *iname)
 	delete [] m_ucPainting;
 	delete [] m_ucPreviewBackup;
 
+	DESTROY(m_ucEdgeImage);
+	DESTROY(m_ucEdgeX);
+	DESTROY(m_ucEdgeY);
+
 	m_ucBitmap		= data;
 
 	// allocate space for draw view
 	m_ucPainting		= new unsigned char [width*height*3];
 	m_ucPreviewBackup	= new unsigned char [width*height*3];
+	m_ucEdgeImage = new unsigned char [width*height*3];
+	m_ucEdgeX = new unsigned char [m_nWidth*m_nHeight*3];
+	m_ucEdgeY = new unsigned char [m_nWidth*m_nHeight*3];
+
 	memset(m_ucPainting, 0, width*height*3);
 
 	m_pUI->m_mainWindow->resize(m_pUI->m_mainWindow->x(), 
@@ -169,10 +178,30 @@ int ImpressionistDoc::loadImage(char *iname)
 	m_pUI->m_paintView->resizeWindow(width, height);	
 	m_pUI->m_paintView->refresh();
 
-
+	updateEdgeImage();
 	return 1;
 }
 
+void ImpressionistDoc::updateEdgeImage(){
+	double gaussian[FLT_WIDTH*FLT_HEIGHT] = {1,4,7,4,1,4,16,26,16,4,7,26,41,26,7,1,4,7,4,1,4,16,26,16,4};
+	double sobelX[FLT_WIDTH*FLT_HEIGHT] = {0,0,0,0,0,0,1,0,-1,0,0,2,0,-2,0,0,1,0,-1,0,0,0,0,0,0};
+	double sobelY[FLT_WIDTH*FLT_HEIGHT] = {0,0,0,0,0,0,1,2,1,0,0,0,0,0,0,0,-1,-2,-1,0,0,0,0,0,0};
+
+	applyFilter(m_ucBitmap,m_nWidth,m_nHeight,m_ucEdgeImage,gaussian,FLT_WIDTH,FLT_HEIGHT,273,0);
+	
+	applyFilter(m_ucEdgeImage,m_nWidth,m_nHeight,m_ucEdgeX,sobelX,FLT_WIDTH,FLT_HEIGHT,1,128);
+	applyFilter(m_ucEdgeImage,m_nWidth,m_nHeight,m_ucEdgeY,sobelY,FLT_WIDTH,FLT_HEIGHT,1,128);
+	
+	unsigned char* beginEdge = m_ucEdgeImage;
+	unsigned char* endEdge = m_ucEdgeImage + (m_nWidth*m_nHeight*3);
+	unsigned char* beginEdgeX = m_ucEdgeX;
+	unsigned char* beginEdgeY = m_ucEdgeY;
+	while(beginEdge!=endEdge){
+		// *beginEdge = std::abs(std::sqrt(((int)*beginEdgeX - 128) * ((int) *beginEdgeX -128) + ((int)*beginEdgeY - 128) * ((int) *beginEdgeY -128)));
+		*beginEdge = std::sqrt(((float)*beginEdgeX -128)* ((float)*beginEdgeX -128) + ((float)*beginEdgeY -128) * ((float)*beginEdgeY -128));
+		++beginEdge;
+		++beginEdgeX;
+		++beginEdgeY;}}
 
 //----------------------------------------------------------------
 // Save the specified image
@@ -286,6 +315,45 @@ GLubyte* ImpressionistDoc::GetOriginalPixel( int x, int y )
 
 	return (GLubyte*)(m_ucBitmap + 3 * (y*m_nWidth + x));
 }
+
+float ImpressionistDoc::GetGradientAtPixel( int x, int y )
+{
+	if ( x < 0 ) 
+		x = 0;
+	else if ( x >= m_nWidth ) 
+		x = m_nWidth-1;
+
+	if ( y < 0 ) 
+		y = 0;
+	else if ( y >= m_nHeight ) 
+		y = m_nHeight-1;
+	unsigned char* rY = m_ucEdgeY + 3 * (y*m_nWidth + x);
+	unsigned char* gY = m_ucEdgeY + 3 * (y*m_nWidth + x) + 1;
+	unsigned char* bY = m_ucEdgeY + 3 * (y*m_nWidth + x) + 2;
+
+	unsigned char* rX = m_ucEdgeX + 3 * (y*m_nWidth + x);
+	unsigned char* gX = m_ucEdgeX + 3 * (y*m_nWidth + x) + 1;
+	unsigned char* bX = m_ucEdgeX + 3 * (y*m_nWidth + x) + 2;
+
+	float gradientAtR = getRadian(((float)*rY -128),((float)*rX -128));
+	float gradientAtG = getRadian(((float)*gY -128),((float)*gX -128));
+	float gradientAtB = getRadian(((float)*bY -128),((float)*bX -128));
+
+
+	float result  = gradientAtR;
+	if(std::fabs(result)<std::fabs(gradientAtG))
+		result = gradientAtG;
+	if(std::fabs(result)<std::fabs(gradientAtB))
+		result = gradientAtB;
+	return result;}
+
+float ImpressionistDoc::getRadian(float numer, float den){
+	if(numer == 0){
+		return (M_PI * 90)/(float)180;
+	} else if(den == 0){
+		return 0;
+	} else {
+		return M_PI/2.0f + std::atan(numer/den);}}
 
 //----------------------------------------------------------------
 // Get the color of the pixel in the original image at point p

@@ -22,7 +22,7 @@ OriginalView::OriginalView(int			x,
 	m_nWindowWidth	= w;
 	m_nWindowHeight	= h;
 	bMarker = false;
-
+	bToggleEdge = false;
 }
 
 void OriginalView::draw()
@@ -67,7 +67,10 @@ void OriginalView::draw()
 			startrow = 0;
 
 
-		bitstart = m_pDoc->m_ucBitmap + 3 * ((m_pDoc->m_nWidth * startrow) + scrollpos.x);
+		if(this->bToggleEdge){
+			bitstart = m_pDoc->m_ucEdgeImage + 3 * ((m_pDoc->m_nWidth * startrow) + scrollpos.x);
+		} else {
+			bitstart = m_pDoc->m_ucBitmap + 3 * ((m_pDoc->m_nWidth * startrow) + scrollpos.x);}
 
 		// just copy image to GLwindow conceptually
 		glRasterPos2i( 0, m_nWindowHeight - drawHeight );
@@ -107,6 +110,10 @@ void OriginalView::drawMarker(){
 		glVertex2d( marker.x - dX, marker.y + dY);
 		glVertex2d( marker.x + dX, marker.y - dY);
 	glEnd();}
+
+void OriginalView::toggleEdge(){
+	this->bToggleEdge = !this->bToggleEdge;
+	this->refresh();}
 
 
 

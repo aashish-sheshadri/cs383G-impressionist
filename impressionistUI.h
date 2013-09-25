@@ -54,6 +54,7 @@ public:
 	Fl_Slider*			m_BrushAngleSlider;
 
 	Fl_Button* 			m_transparentBackgroundButton;
+	Fl_Button* 			m_edgeImageButton;
 
 // for filter dialog
 	Fl_Window*			m_filterDialog;
@@ -110,7 +111,7 @@ private:
 	// Static class members
 	static Fl_Menu_Item		menuitems[];
 	static Fl_Menu_Item		brushTypeMenu[NUM_BRUSH_TYPE+1];
-	static Fl_Menu_Item		angleChoiceMenu[3+1];
+	static Fl_Menu_Item		angleChoiceMenu[4+1];
 
 	static Fl_Menu_Item		filterChoiceMenu[2+1];
 
@@ -135,6 +136,7 @@ private:
 	static void	cb_filterChoice(Fl_Widget* o, void* v);
 	static void	cb_transparentBackground(Fl_Widget* o, void* v);
 	static void	cb_backgroundAlphaSlides(Fl_Widget* o, void* v);
+	static void	cb_edgeImage(Fl_Widget* o, void* v);
 	
 	//filter callbacks
 	static void	cb_apply_filter_button(Fl_Widget* o, void* v);

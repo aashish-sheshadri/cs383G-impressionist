@@ -67,9 +67,11 @@ void LineBrush::BrushMove( const Point source, const Point target )
 			magnitude = (std::sqrt((numer*numer)+(den*den)))/2;
 		} else {
 			return;}
-	} else {
+	} else if (angleChoice == 2){
 		int angle = pDoc->getAngle();
-		rad = (M_PI * (float)angle)/(float)180;}
+		rad = (M_PI * (float)angle)/(float)180;
+	} else if (angleChoice == 3){
+		rad = pDoc->GetGradientAtPixel( source.x,source.y );}
 
 	glLineWidth ((float)size/4);
 	Point begin = target;

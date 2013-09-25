@@ -441,10 +441,11 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE+1] = {
 };
 
 // Angle choice menu definition
-Fl_Menu_Item ImpressionistUI::angleChoiceMenu[3+1] = {
+Fl_Menu_Item ImpressionistUI::angleChoiceMenu[4+1] = {
   {"Follow",FL_ALT+'f', (Fl_Callback *)ImpressionistUI::cb_angleChoice, (void *)0},
   {"Drag",FL_ALT+'d', (Fl_Callback *)ImpressionistUI::cb_angleChoice, (void *)1},
   {"Slider",FL_ALT+'s', (Fl_Callback *)ImpressionistUI::cb_angleChoice, (void *)2},
+  {"Follow Gradient",FL_ALT+'f', (Fl_Callback *)ImpressionistUI::cb_angleChoice, (void *)3},
   {0}
 };
 
@@ -507,6 +508,10 @@ ImpressionistUI::ImpressionistUI() {
 		m_transparentBackgroundButton = new Fl_Button(130,280,150,25,"&Show Background");
 		m_transparentBackgroundButton->user_data((void*)(this));
 		m_transparentBackgroundButton->callback(cb_transparentBackground);
+
+		m_edgeImageButton = new Fl_Button(130,180,150,25,"&Toggle Edge Image");
+		m_edgeImageButton->user_data((void*)(this));
+		m_edgeImageButton->callback(cb_edgeImage);
 
 		//Add angle choice menu
 		Fl_Choice * myChoice = new Fl_Choice(95,60,150,25,"&Angle Choice");
@@ -707,6 +712,9 @@ ImpressionistUI::ImpressionistUI() {
 
 void ImpressionistUI::cb_transparentBackground(Fl_Widget* o, void* v){
 	((ImpressionistUI *)(o->user_data()))->m_paintView->setDrawTransparentBackground((unsigned char)((ImpressionistUI *)(o->user_data()))->m_nBackgroundAlpha);}
+
+void ImpressionistUI::cb_edgeImage(Fl_Widget* o, void* v){
+	((ImpressionistUI *)(o->user_data()))->m_origView->toggleEdge();}
 
 void ImpressionistUI::cb_filterChoice(Fl_Widget* o, void* v)
 {
